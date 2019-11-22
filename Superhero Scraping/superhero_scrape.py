@@ -5,13 +5,47 @@ Created on Sun Nov 17 18:31:01 2019
 @author: Max Tchibozo
 """
 
-import json
-import pandas as pd
+
 import requests
 from bs4 import BeautifulSoup
+import re
+import pandas as pd
 
-with open('movie_dict.json', 'r') as f:
-    fin_dict = json.load(f)
+URL = "https://en.wikipedia.org/wiki/List_of_films_based_on_Marvel_Comics_publications"
+
+res = requests.get(URL).text
+soup = BeautifulSoup(res,'lxml')
+links={}
+for items in soup.find('table', class_='wikitable sortable').find_all('i'):
+    links[items.a.text]="https://en.wikipedia.org"+items.a['href']
+    
+
+URL1 =  "https://en.wikipedia.org/wiki/List_of_films_based_on_DC_Comics_publications"
+
+res1 = requests.get(URL1).text
+soup1 = BeautifulSoup(res1,'lxml')
+
+for items in soup1.find('table', class_='wikitable sortable').find_all('tr'):
+    if len(items.find_all('i')) != 0:
+        links[items.find_all('i')[0].text]= "https://en.wikipedia.org"+items.find_all('i')[0].a['href']
+fin_dict={}
+
+for i in links:
+    fin_dict[i]={}
+
+for j in links:
+    res1 = requests.get(links[j]).text
+    soup1 = BeautifulSoup(res1,'lxml')
+    for items in soup1.find_all('a'):
+        if items.has_attr('href'):
+            if items['href'].startswith("https://www.rottentomatoes.com/m/"):
+                fin_dict[j]['rt']=items['href']
+            if re.match("^https://www.imdb.com/title/tt[^/]+/$",items['href'])!=None:
+                fin_dict[j]['imdb']=items['href']
+            if items['href'].startswith("https://www.boxofficemojo.com/movies/?id="):
+                fin_dict[j]['bm']=items['href']
+
+
 
 rt_count = 0
 imdb_count = 0
@@ -114,11 +148,28 @@ for movie in fin_dict.keys():
     #TODO
     
     
-with open('movie_dict_with_data.json', 'w') as fp:
-    json.dump(fin_dict, fp, sort_keys=True) 
-        
+def string_to_float(value):
+    if type(value) == str:
+        new_value = value.replace(",","")
+        new_value = new_value.replace("$","")
+        new_value = float(new_value)
+        return new_value
+    else: #value is an NA
+        return value
 
-        
+            
+    
+
+df = pd.DataFrame.from_dict(fin_dict, orient='index')
+df['budget'] = df['budget'].apply(lambda x: string_to_float(x))
+df['opening_weekend_usa'] = df['opening_weekend_usa'].apply(lambda x: string_to_float(x))
+df['gross_usa'] = df['gross_usa'].apply(lambda x: string_to_float(x))
+df['gross_worldwide'] = df['gross_worldwide'].apply(lambda x: string_to_float(x))
+
+df.to_csv('superhero_movie_dataframe.csv')
+
+
+
 
 """
 Critic score (RT - DONE)
