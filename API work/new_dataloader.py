@@ -10,15 +10,16 @@ import config
 import requests
 import locale 
 import time
+import getkey
 import tmdbsimple as tmdb
 
-api_key = '59ae52fe00a65dfb6c903fa815fd746a'
+api_key = getkey.mykey()
 file = open("dataset1.csv", 'w')
 
 mid=[]
 dire=[]
 
-tmdb.API_KEY = '59ae52fe00a65dfb6c903fa815fd746a'
+tmdb.API_KEY = getkey.mykey()
 discover = tmdb.Discover()
 
 for year in range(1980,2020):
