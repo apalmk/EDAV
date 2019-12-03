@@ -205,7 +205,8 @@ for movie in fin_dict.keys():
             
         except:
             pass
-    
+        #We then scrape the number of theaters from box office mojo
+
     if "bm" in fin_dict[movie].keys():
         url_bm = fin_dict[movie]["bm"]
         res = requests.get(url_bm).text
@@ -220,9 +221,14 @@ for movie in fin_dict.keys():
             fin_dict[movie]["theaters"]= float(theaters)
             print("Theaters nb : ",float(theaters))
         
-    #We then scrape the number of theaters from box office mojo
-    #TODO
-    
+#We add a studio (Marvel, DC) to each movie in fin_dict
+start_of_DC_movies = list(fin_dict.keys()).index("Superman and the Mole Men")
+
+for i in range(len(list(fin_dict.keys()))):
+    if i < start_of_DC_movies:
+        fin_dict[list(fin_dict.keys())[i]]["studio"] = "Marvel"
+    else:
+        fin_dict[list(fin_dict.keys())[i]]["studio"] = "DC"    
     
 def string_to_float(value): #By default, budget has format $xx,xxx,xxx . We want a float instead
     if type(value) == str:
