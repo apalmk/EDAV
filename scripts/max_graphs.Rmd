@@ -85,4 +85,74 @@ II - 6) Boxplots for Marvel and DC movies
 
 Boxplot for scores faceted by Marvel movie or DC movie, with median, outliers, etc.
 
+```{r}
+# boxplot by studio 
+ggplot(df, aes(x = reorder(studio, -imdb_rating, median), y = imdb_rating)) + 
+  # plotting
+  geom_boxplot(fill = "#cc9a38", color = "#473e2c") + 
+  # formatting
+  ggtitle("IMDB Score of Marvel vs. DC movies",
+          subtitle = "Boxplots of IMDB score by movie studio") +
+  labs(x = "Movie Studio", y = "IMDBScore") +
+  theme_grey(16) +
+  theme(plot.title = element_text(face = "bold")) +
+  theme(plot.subtitle = element_text(face = "bold", color = "grey35")) +
+  theme(plot.caption = element_text(color = "grey68"))
+```
+
+This graph shows that while Marvel and DC movies have a similar median rating on IMDB (7 vs. 6.5), the interquartile range for DC movies is much larger. This means that Marvel movies are consistently achieving a score close to 7, whereas there is more variability for DC movies, 25% of which have an IMDB score of less than 5.2 .
+
+It is worth noting that the best rated DC movie achieves a higher IMDB score than the best rated Marvel movie.
+
+What about the Rotten Tomatoes scores?
+
+```{r}
+#Remove % from critic score and audience score
+df$critic_score_rt = as.numeric(substr(df$critic_score_rt,1,nchar(df$critic_score_rt)-1))
+df$audience_score_rt = as.numeric(substr(df$audience_score_rt,1,nchar(df$audience_score_rt)-1))
+```
+
+
+Rotten Tomatoes Audience Score:
+
+```{r}
+# boxplot bystudio 
+ggplot(df, aes(x = reorder(studio, -audience_score_rt, median), y = audience_score_rt)) + 
+  # plotting
+  geom_boxplot(fill = "#cc9a38", color = "#473e2c") + 
+  # formatting
+  ggtitle("Rotten Tomatoes Audience Score",
+          subtitle = "Boxplots of RT Audience score by studio") +
+  labs(x = "studio", y = "Audience score (%)") +
+  theme_grey(16) +
+  theme(plot.title = element_text(face = "bold")) +
+  theme(plot.subtitle = element_text(face = "bold", color = "grey35")) +
+  theme(plot.caption = element_text(color = "grey68"))
+```
+
+Unsurprisingly, the Rotten Tomatoes Audience boxplots look similar to those in the IMDB graphs. This is because the IMDB grade is based on audience feedback. Once again, the medians are almost identical for Marvel and DC movies (75% vs. 70%). We can assume that the audience which gave a score on IMDB is similar to the audience which gave a score on IMDB. 
+
+It is worth noting that the interquartile range for the DC movies is noticeably larger than in the previous graph. This indicates that, when given a scale out of 100, the audience gave harsher reviews to the DC movies than for the IMDB scale (out of 10).
+
+
+Rotten Tomatoes Critic Score : 
+
+```{r}
+# boxplot bystudio 
+ggplot(df, aes(x = reorder(studio, -critic_score_rt, median), y = critic_score_rt)) + 
+  # plotting
+  geom_boxplot(fill = "#cc9a38", color = "#473e2c") + 
+  # formatting
+  ggtitle("Rotten Tomatoes Critic Score",
+          subtitle = "Boxplots of RT Critic score by studio") +
+  labs(x = "studio", y = "Critic score (%)") +
+  theme_grey(16) +
+  theme(plot.title = element_text(face = "bold")) +
+  theme(plot.subtitle = element_text(face = "bold", color = "grey35")) +
+  theme(plot.caption = element_text(color = "grey68"))
+```
+
+It is worth taking a pause to interpret this graph. Whereas the audience ratings (IMDB, Rotten Tomatoes) had a similar median for Marvel and DC movies, the critic scores are much more severe. The median for marvel movies is 77%, whereas the median for DC movies is 55%. Critics clearly seem to prefer Marvel movies, while audiences are more undecided.
+
+
 
