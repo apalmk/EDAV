@@ -242,6 +242,8 @@ def find_2020(string): # The movies that were released in 2020 should be removed
     else:
         return False 
     
+for movie in fin_dict.keys():
+    fin_dict[movie]["year"] = fin_dict[movie]["release_date"].split(" ")[-2]
 
 df = pd.DataFrame.from_dict(fin_dict, orient='index')
 df['budget'] = df['budget'].apply(lambda x: string_to_float(x))
@@ -250,6 +252,7 @@ df['gross_usa'] = df['gross_usa'].apply(lambda x: string_to_float(x))
 df['gross_worldwide'] = df['gross_worldwide'].apply(lambda x: string_to_float(x))
 
 df = df[df['release_date'].map(find_2020) == False]
+
 
 df.to_csv('superhero_movie_dataframe.csv')
 
