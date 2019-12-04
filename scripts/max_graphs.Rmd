@@ -12,9 +12,12 @@ library(ggplot2)
 II - Superhero movie analysis
 
 ```{r}
-df <- superhero_movie_dataframe # import superhero_movie_dataframe (from text, readr) directly to your environment
+df_superhero <- superhero_movie_dataframe # import superhero_movie_dataframe (from text, readr) directly to your environment
 ticket_prices <- avg_ticket_price # import avg.ticket.price (from text, readr) from the datasets folder
 ticket_prices[30,1] <- 1989
+
+df_database <- dataset1_4000 #import dataset1_4000 (from Text, base) from the datasets folder - IMPORTANT : UNSELECT STRINGS AS FACTORS
+
 ```
 
 II - 1) Evaluating popularity over the years
@@ -26,13 +29,13 @@ As the revenue graphs from Part I - Genre Analysis show, revenue for movies has 
 
 ```{r}
 #getting revenue
-movie_revenue <- sapply(df["gross_usa"],as.numeric)
+movie_revenue <- sapply(df_superhero["gross_usa"],as.numeric)
 
 #getting the year of release of each movie
-movie_year <- sapply(df["year"],as.numeric)
+movie_year <- sapply(df_superhero["year"],as.numeric)
 
 ticket_year <- sapply(ticket_prices[1],as.numeric)
-ticket_year[30] <- 
+ticket_year[30] <- 1989
 #Defining popularity as the quotient between revenue and average ticket price of the year
 
 popularity <- c(1:length(movie_year))
@@ -87,24 +90,42 @@ Compare average ROI of regular dataset and superhero movies (time series)  (don'
 
 
 ```{r}
-superheroes_ROI <- df["gross_worldwide"]-df["budget"]
-superheroes_year <- df["year"]
+superheroes_ROI <- df_superhero["gross_worldwide"]-df_superhero["budget"]
+superheroes_year <- df_superhero["year"]
+#superhero is for superhero database, regular is for the regular database (with 4000 rows)
+regular_ROI <- df_database["revenue"]-df_database["budget"]
+
+regular_year <- df_database["release_date"]
+
+for (i in 1:nrow(regular_year)){
+  regular_year[i,] <- substr(regular_year[i,],1,4)
+}
+
+regular_year <- data.frame(sapply(regular_year, function(x) as.numeric(as.character(x))))
+
+
 ```
 
 
 
 ```{r}
-roi_frame = data.frame(year=superheroes_year,ROI=superheroes_ROI)
+superhero_roi_frame = data.frame(year=superheroes_year,ROI=superheroes_ROI)
 
-mean_ROI_frame <- aggregate(roi_frame[, 2], list(roi_frame$year), mean)[-c(1,2),]
+mean_superhero_roi_frame <- aggregate(superhero_roi_frame[, 2], list(superhero_roi_frame$year), mean)[-c(1,2),]
 
-ggplot(data = mean_ROI_frame, aes(x = Group.1, y = x))+
-  geom_line(color = "red") +
-  ggtitle("Average Return on Investment of Superhero Movies over time") +
-  labs(x = "year", y = "ROI (revenue-budget)")
+regular_roi_frame = data.frame(year=regular_year,ROI=regular_ROI)
+mean_regular_roi_frame <- aggregate(regular_roi_frame[,2],list(regular_roi_frame$release_date),mean)[-c(40),]
+
+
+ggplot() + 
+  geom_line(data = mean_superhero_roi_frame, aes(x = Group.1, y = x), color = "red") +
+  geom_line(data = mean_regular_roi_frame, aes(x = Group.1, y = x), color = "blue") +
+  xlab('year') +
+  ylab('ROI (revenue-budget') + ggtitle("Average Return on Investment of Superhero (red) and regular (blue) Movies")
 
 ```
 
+While the regular movie Return on Investment line shows that ROI for movies overall has increased over time, the superhero ROI line increases much faster. This indicates that superhero movies are more bankable. That is, studios can expect a higher return from superhero movies than from regular movies. This explains the trend of movie studios jumping on the "superhero movie bandwagon". Since they can expect to make more money on average from those movies, it is in their financial interest to focus particularly on this category of movies.
 
 
 
@@ -119,7 +140,7 @@ Boxplot for scores faceted by Marvel movie or DC movie, with median, outliers, e
 
 ```{r}
 # boxplot by studio 
-ggplot(df, aes(x = reorder(studio, -imdb_rating, median), y = imdb_rating)) + 
+ggplot(df_superhero, aes(x = reorder(studio, -imdb_rating, median), y = imdb_rating)) + 
   # plotting
   geom_boxplot(fill = "#cc9a38", color = "#473e2c") + 
   # formatting
@@ -140,8 +161,8 @@ What about the Rotten Tomatoes scores?
 
 ```{r}
 #Remove % from critic score and audience score
-df$critic_score_rt = as.numeric(substr(df$critic_score_rt,1,nchar(df$critic_score_rt)-1))
-df$audience_score_rt = as.numeric(substr(df$audience_score_rt,1,nchar(df$audience_score_rt)-1))
+df_superhero$critic_score_rt = as.numeric(substr(df_superhero$critic_score_rt,1,nchar(df_superhero$critic_score_rt)-1))
+df_superhero$audience_score_rt = as.numeric(substr(df_superhero$audience_score_rt,1,nchar(df_superhero$audience_score_rt)-1))
 ```
 
 
@@ -149,7 +170,7 @@ Rotten Tomatoes Audience Score:
 
 ```{r}
 # boxplot bystudio 
-ggplot(df, aes(x = reorder(studio, -audience_score_rt, median), y = audience_score_rt)) + 
+ggplot(df_superhero, aes(x = reorder(studio, -audience_score_rt, median), y = audience_score_rt)) + 
   # plotting
   geom_boxplot(fill = "#cc9a38", color = "#473e2c") + 
   # formatting
@@ -171,7 +192,7 @@ Rotten Tomatoes Critic Score :
 
 ```{r}
 # boxplot bystudio 
-ggplot(df, aes(x = reorder(studio, -critic_score_rt, median), y = critic_score_rt)) + 
+ggplot(df_superhero, aes(x = reorder(studio, -critic_score_rt, median), y = critic_score_rt)) + 
   # plotting
   geom_boxplot(fill = "#cc9a38", color = "#473e2c") + 
   # formatting
@@ -186,5 +207,9 @@ ggplot(df, aes(x = reorder(studio, -critic_score_rt, median), y = critic_score_r
 
 It is worth taking a pause to interpret this graph. Whereas the audience ratings (IMDB, Rotten Tomatoes) had a similar median for Marvel and DC movies, the critic scores are much more severe. The median for marvel movies is 77%, whereas the median for DC movies is 55%. Critics clearly seem to prefer Marvel movies, while audiences are more undecided.
 
+
+III - Director Analysis
+
+2) Most versatile directors: find type of graph (not time series) to plot number of different genres per director. (bar chart)
 
 
