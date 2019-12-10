@@ -1,7 +1,7 @@
 library(tidyverse)
 library(parcoords)
 path = 'Documents/Cours/Exploratory\ Data\ Analysis/Code/Final\ Project/datasets/raw/dataset1_4000.csv'
-#load dataframe and rremove rows without genres
+#load dataframe and remove rows without genres
 df <- filter(read.csv(path, sep =";"), genres != '')
 #get first genre for every movie (most relevant)
 single_genres <- do.call(rbind,strsplit(as.character(df$genres),'\\|'))[,1]
@@ -27,6 +27,7 @@ df3 %>%
   summarise(popularity = mean(popularity), budget = mean(budget), revenue = mean(revenue), 
             mark = sum(vote_average*vote_count)/sum(vote_count)) -> results
 
+#do a time serie of this one over the year
 parcoords(data = results, 
           rownames = FALSE, 
           brushMode = "1D-axes", 
@@ -38,7 +39,7 @@ df4 <- select(df2, release_date, genres, popularity, budget, revenue, vote_count
 years <- as.numeric(do.call(rbind,strsplit(as.character(df4$release_date), '-'))[,1])
 df5 <- data.frame(years = years, select(df4, -release_date))
 
-gap <- 3
+gap <- 2
 
 df5 %>%
   group_by(genres,years) %>%
@@ -53,5 +54,66 @@ for (year in years){
     }
 }
 results1 <- na.omit(results1)
-
+results1
+#log scale
 ggplot(data = results1, aes(x = log(revenue_generated_t1), y = n_movies_t2, color = genres)) + geom_point()
+
+#Average Return on investment (revenue - budget) (divided by number of movies that have this genre)
+#x axis is the genre, bar graph
+df6 <- select(df2,genres,revenue,budget)
+df7 <- mutate(df6,ROI = revenue-budget)
+df7 %>%
+  group_by(genres) %>%
+  summarise(average_ROI = mean(ROI)) -> results2
+#TS to do as well
+ggplot(results2) + geom_bar(aes(x=reorder(genres,-average_ROI), y=average_ROI), stat='identity')
+
+#Shiny app
+# Load packages
+library(shiny)
+library(shinythemes)
+library(readr)
+
+# Define UI
+ui <- # Use a fluid Bootstrap layout
+  fluidPage(    
+    
+    # Give the page a title
+    titlePanel("Telephones by region"),
+    
+    # Generate a row with a sidebar
+    sidebarLayout(      
+      
+      # Define the sidebar with one input
+      sidebarPanel(
+        selectInput("region", "Region:", 
+                    choices=unique(results1$years)),
+        hr(),
+        helpText("Data from AT&T (1961) The World's Telephones.")
+      ),
+      
+      # Create a spot for the barplot
+      mainPanel(
+        plotOutput("phonePlot")  
+      )
+      
+    )
+  )
+
+# Define server function
+server <- function(input, output) {
+    
+    # Fill in the spot we created for a plot
+    output$phonePlot <- renderPlot({
+      
+      # Render a barplot
+      barplot(results1$n_movies_t1, 
+              main=input$region,
+              ylab="Number of Telephones",
+              xlab="Year")
+    })
+}
+results1
+# Create Shiny object
+shinyApp(ui = ui, server = server)
+
