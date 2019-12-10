@@ -1,0 +1,157 @@
+---
+title: "Thomas_graphs"
+author: "Thomas Causero"
+date: "12/10/2019"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning=FALSE)
+```
+
+
+```{r}
+#load libraries
+library(tidyverse)
+library(parcoords)
+library(shiny)
+library(shinythemes)
+library(readr)
+library(ggthemes)
+```
+
+
+```{r}
+#load dataset and remove rows without genres
+path <- '../datasets/clean/clean_data.csv'
+df <- filter(read.csv(path), genres != '')
+head(df)
+```
+
+## Get all movies genres
+
+```{r}
+#Only keep the first genre, which is the most accurate
+genres <- do.call(rbind,strsplit(as.character(df$genres),'\\|'))[,1]
+df1 <- data.frame(genres = genres, select(df, -genres))
+unique(df1$genres)
+```
+
+```{r}
+#plot (number of movies for each genre)
+genres_info <- df1 %>% 
+               count(genres) %>% 
+               mutate(perc =  n / nrow(df1))
+ggplot(genres_info, aes(x = reorder(genres,perc), y = perc)) + geom_bar(stat = "identity") + coord_flip()
+ggplot(genres_info, aes(x=reorder(genres,n), y=n)) + geom_bar(stat = 'identity') + coord_flip()
+```
+
+## 5 most present genres
+
+```{r}
+#5 most present genres : Comedy, Action, Drama, Adventure, Horror
+genres_under_study <- arrange(genres_info,-n)[1:5,'genres'][['genres']]
+genres_under_study
+#only keep rows whose genre is among the top 5
+df2 <- filter(df1, genres %in% as.vector(genres_under_study))
+#keep only interesting rows and omit NA values
+df2 <- na.omit(select(df2, year, genres, popularity, budget, revenue, vote_count, vote_average))
+df2 %>%
+  group_by(year, genres) %>%
+  summarise(popularity = mean(popularity), budget = mean(budget, na.rm = T), revenue = mean(revenue), 
+            mark = sum(vote_average*vote_count)/sum(vote_count)) -> results
+
+ggplot(data = results) + geom_line(aes(x = year, y = popularity, color=genres)) + scale_color_colorblind()
+ggplot(data = results) + geom_line(aes(x = year, y = budget, color=genres)) + scale_color_colorblind()
+ggplot(data = results) + geom_line(aes(x = year, y = revenue, color=genres)) + scale_color_colorblind()
+ggplot(data = results) + geom_line(aes(x = year, y = mark, color=genres)) + scale_color_colorblind()
+```
+
+## Influence of revenues over genres
+
+```{r}
+#group by genres for year t and year t+gap
+gap <- 2
+
+df2 %>%
+  group_by(genres,year) %>%
+  summarize(revenue_generated_t1 = sum(revenue), n_movies_t1 = n()) %>%
+  ungroup() -> results1
+results1$n_movies_t2 <- NA
+
+for (year in results1$year){
+    for (genre in genres_under_study){
+       tmp <- results1[results1$year == year-gap & results1$genres == genre,]['n_movies_t1']
+       results1[results1$year == year & results1$genres == genre,]['n_movies_t2'] <- as.numeric(tmp)
+    }
+}
+results1 <- na.omit(results1)
+
+#log scale
+ggplot(data = results1, aes(x = log(revenue_generated_t1), y = n_movies_t2, color = genres)) + 
+  geom_point() + 
+  scale_color_colorblind()
+```
+
+```{r}
+# Define UI
+ui <- # Use a fluid Bootstrap layout
+  fluidPage(    
+    # Give the page a title
+    titlePanel("Influence of revenue over genres"),
+    # Generate a row with a sidebar
+    sidebarLayout(      
+      # Define the sidebar with one input
+      sidebarPanel(
+        selectInput("year", "Year:", 
+                    choices=unique(df2$year)),
+        selectInput("gap", "Gap (in years):", 
+                    choices=1:5),
+        hr()
+      ),
+      # Create a spot for the barplot
+      mainPanel(
+        plotOutput("movieplot")  
+      )
+    )
+  )
+
+# Define server function
+server <- function(input, output) {
+    # Fill in the spot we created for a plot
+    output$movieplot <- renderPlot({
+      t1 <- as.numeric(input$year)
+      t2 <- t1 + as.numeric(input$gap)
+      tmp_t1 <- select(filter(df2, year == t1),genres, revenue)
+      revenue_t1 <- tmp_t1 %>% group_by(genres) %>% summarise(revenue = mean(revenue, na.rm = T))
+      tmp_t2 <- select(filter(df2, year == t2),genres)
+      n_movies_t2 <- tmp_t2 %>% group_by(genres) %>% summarise(n_t2 = n())
+      output <- merge(revenue_t1, n_movies_t2)
+      max_x <- max(output$revenue)
+      max_y <- max(output$n_t2)
+      cor_coef <- cor(output$revenue, output$n_t2)
+      # Render a barplot
+      ggplot(output, aes(x=revenue, y=n_t2)) + geom_point() +
+        geom_text(label=output$genres, nudge_y = max_y/40) +
+        annotate("text", x=max_x/2, y=max_y, label= paste('correlation coefficient:',round(cor_coef,2)))
+    })
+}
+
+# Create Shiny object
+shinyApp(ui = ui, server = server)
+```
+
+
+```{r}
+#Average Return on investment (revenue - budget) (divided by number of movies that have this genre)
+#x axis is the genre, bar graph
+df3 <- select(df2,genres,revenue,budget)
+df3 <- mutate(df3,ROI = revenue-budget)
+df3 %>%
+  group_by(genres) %>%
+  summarise(average_ROI = mean(ROI)) -> results2
+#TS to do as well
+ggplot(results2) + geom_bar(aes(x=reorder(genres,-average_ROI), y=average_ROI), stat='identity')
+```
+
