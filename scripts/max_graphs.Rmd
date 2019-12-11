@@ -12,11 +12,11 @@ library(ggplot2)
 II - Superhero movie analysis
 
 ```{r}
-df_superhero <- superhero_movie_dataframe # import superhero_movie_dataframe (from text, readr) directly to your environment
+df_superhero <- clean_superhero # import clean_superhero (from text, readr) directly to your environment
 ticket_prices <- avg_ticket_price # import avg.ticket.price (from text, readr) from the datasets folder
 ticket_prices[30,1] <- 1989
 
-df_database <- dataset1_4000 #import dataset1_4000 (from Text, base) from the datasets folder - IMPORTANT : UNSELECT STRINGS AS FACTORS
+df_database <- main_ds_without_superhero #import main_ds_without_superhero (from Text, base) from the datasets folder - IMPORTANT : UNSELECT STRINGS AS FACTORS
 
 ```
 
@@ -112,16 +112,19 @@ regular_year <- data.frame(sapply(regular_year, function(x) as.numeric(as.charac
 superhero_roi_frame = data.frame(year=superheroes_year,ROI=superheroes_ROI)
 
 mean_superhero_roi_frame <- aggregate(superhero_roi_frame[, 2], list(superhero_roi_frame$year), mean)[-c(1,2),]
+mean_superhero_roi_frame = mean_superhero_roi_frame[!is.na(mean_superhero_roi_frame$x),]
+
 
 regular_roi_frame = data.frame(year=regular_year,ROI=regular_ROI)
+
 mean_regular_roi_frame <- aggregate(regular_roi_frame[,2],list(regular_roi_frame$release_date),mean)[-c(40),]
 
 
 ggplot() + 
   geom_line(data = mean_superhero_roi_frame, aes(x = Group.1, y = x), color = "red") +
-  geom_line(data = mean_regular_roi_frame, aes(x = Group.1, y = x), color = "blue") +
+  geom_line(data = mean_regular_roi_frame, aes(x = Group.1, y = x), color = "blue") + geom_point()+
   xlab('year') +
-  ylab('ROI (revenue-budget') + ggtitle("Average Return on Investment of Superhero (red) and regular (blue) Movies")
+  ylab('ROI (revenue-budget)') + ggtitle("Average Return on Investment of Superhero (red) and regular (blue) Movies")
 
 ```
 
@@ -142,7 +145,7 @@ Boxplot for scores faceted by Marvel movie or DC movie, with median, outliers, e
 # boxplot by studio 
 ggplot(df_superhero, aes(x = reorder(studio, -imdb_rating, median), y = imdb_rating)) + 
   # plotting
-  geom_boxplot(fill = "#cc9a38", color = "#473e2c") + 
+  geom_boxplot(fill = "#cc9a38", color = "#473e2c") + stat_boxplot(geom="errorbar") +
   # formatting
   ggtitle("IMDB Score of Marvel vs. DC movies",
           subtitle = "Boxplots of IMDB score by movie studio") +
@@ -153,11 +156,11 @@ ggplot(df_superhero, aes(x = reorder(studio, -imdb_rating, median), y = imdb_rat
   theme(plot.caption = element_text(color = "grey68"))
 ```
 
-This graph shows that while Marvel and DC movies have a similar median rating on IMDB (7 vs. 6.5), the interquartile range for DC movies is much larger. This means that Marvel movies are consistently achieving a score close to 7, whereas there is more variability for DC movies, 25% of which have an IMDB score of less than 5.2 .
+This graph shows that while Marvel and DC movies have a similar median rating on IMDB (7 vs. 6.5), the interquartile range for DC movies is much larger. This means that Marvel movies are more consistent when compared to DC movies in the matters of IMDB scores. There is more variability for DC movies, 25% of which have an IMDB score of less than 5.2 .
 
 It is worth noting that the best rated DC movie achieves a higher IMDB score than the best rated Marvel movie.
 
-What about the Rotten Tomatoes scores?
+Wh_at about the Rotten Tomatoes scores?
 
 ```{r}
 #Remove % from critic score and audience score
@@ -170,9 +173,11 @@ Rotten Tomatoes Audience Score:
 
 ```{r}
 # boxplot bystudio 
-ggplot(df_superhero, aes(x = reorder(studio, -audience_score_rt, median), y = audience_score_rt)) + 
+df_superhero1 = df_superhero[!is.na(df_superhero$audience_score_rt),]
+
+ggplot(df_superhero1, aes(x = reorder(studio, -audience_score_rt, median), y = audience_score_rt)) + 
   # plotting
-  geom_boxplot(fill = "#cc9a38", color = "#473e2c") + 
+  geom_boxplot(fill = "#cc9a38", color = "#473e2c") + stat_boxplot(geom="errorbar") +
   # formatting
   ggtitle("Rotten Tomatoes Audience Score",
           subtitle = "Boxplots of RT Audience score by studio") +
@@ -183,7 +188,7 @@ ggplot(df_superhero, aes(x = reorder(studio, -audience_score_rt, median), y = au
   theme(plot.caption = element_text(color = "grey68"))
 ```
 
-Unsurprisingly, the Rotten Tomatoes Audience boxplots look similar to those in the IMDB graphs. This is because the IMDB grade is based on audience feedback. Once again, the medians are almost identical for Marvel and DC movies (75% vs. 70%). We can assume that the audience which gave a score on IMDB is similar to the audience which gave a score on IMDB. 
+Unsurprisingly, the Rotten Tomatoes Audience boxplots look similar to those in the IMDB graphs. This is because the IMDB grade is based on audience feedback. Once again, the medians are almost identical for Marvel and DC movies (75% vs. 70%). We can assume that the audience which gave a score on IMDB is similar to the audience which gave a score on Rotten Tomatoes. 
 
 It is worth noting that the interquartile range for the DC movies is noticeably larger than in the previous graph. This indicates that, when given a scale out of 100, the audience gave harsher reviews to the DC movies than for the IMDB scale (out of 10).
 
@@ -192,9 +197,11 @@ Rotten Tomatoes Critic Score :
 
 ```{r}
 # boxplot bystudio 
-ggplot(df_superhero, aes(x = reorder(studio, -critic_score_rt, median), y = critic_score_rt)) + 
+df_superhero2 = df_superhero[!is.na(df_superhero$critic_score_rt),]
+
+ggplot(df_superhero2, aes(x = reorder(studio, -critic_score_rt, median), y = critic_score_rt)) + 
   # plotting
-  geom_boxplot(fill = "#cc9a38", color = "#473e2c") + 
+  geom_boxplot(fill = "#cc9a38", color = "#473e2c") + stat_boxplot(geom="errorbar") + 
   # formatting
   ggtitle("Rotten Tomatoes Critic Score",
           subtitle = "Boxplots of RT Critic score by studio") +
