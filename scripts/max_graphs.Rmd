@@ -121,7 +121,7 @@ mean_regular_roi_frame$type = rep("Regular", nrow(mean_regular_roi_frame))
 mean_merged = rbind(mean_superhero_roi_frame,mean_regular_roi_frame)
 
 
-ggplot(mean_merged, aes(Group.1,x, color=type)) + geom_line() +
+ggplot(mean_merged, aes(Group.1,x, color=type)) + geom_line() + guides(color = guide_legend(reverse = TRUE)) +
   xlab('year') +
   ylab('ROI (revenue-budget)') + ggtitle("Average Return on Investment of Superhero and regular Movies") 
 ```
