@@ -107,34 +107,26 @@ regular_year <- data.frame(sapply(regular_year, function(x) as.numeric(as.charac
 ```
 
 
-
 ```{r}
 superhero_roi_frame = data.frame(year=superheroes_year,ROI=superheroes_ROI)
 
 mean_superhero_roi_frame <- aggregate(superhero_roi_frame[, 2], list(superhero_roi_frame$year), mean)[-c(1,2),]
 mean_superhero_roi_frame = mean_superhero_roi_frame[!is.na(mean_superhero_roi_frame$x),]
-
+mean_superhero_roi_frame$type = rep("Superhero", nrow(mean_superhero_roi_frame))
 
 regular_roi_frame = data.frame(year=regular_year,ROI=regular_ROI)
-
 mean_regular_roi_frame <- aggregate(regular_roi_frame[,2],list(regular_roi_frame$release_date),mean)[-c(40),]
+mean_regular_roi_frame$type = rep("Regular", nrow(mean_regular_roi_frame))
+
+mean_merged = rbind(mean_superhero_roi_frame,mean_regular_roi_frame)
 
 
-ggplot() + 
-  geom_line(data = mean_superhero_roi_frame, aes(x = Group.1, y = x), color = "red") +
-  geom_line(data = mean_regular_roi_frame, aes(x = Group.1, y = x), color = "blue") + geom_point()+
+ggplot(mean_merged, aes(Group.1,x, color=type)) + geom_line() +
   xlab('year') +
-  ylab('ROI (revenue-budget)') + ggtitle("Average Return on Investment of Superhero (red) and regular (blue) Movies")
-
+  ylab('ROI (revenue-budget)') + ggtitle("Average Return on Investment of Superhero and regular Movies") 
 ```
 
 While the regular movie Return on Investment line shows that ROI for movies overall has increased over time, the superhero ROI line increases much faster. This indicates that superhero movies are more bankable. That is, studios can expect a higher return from superhero movies than from regular movies. This explains the trend of movie studios jumping on the "superhero movie bandwagon". Since they can expect to make more money on average from those movies, it is in their financial interest to focus particularly on this category of movies.
-
-
-
-
-
-
 
 
 II - 6) Boxplots for Marvel and DC movies
