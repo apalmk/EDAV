@@ -772,12 +772,13 @@ ts_budget_revenue["value"] <- lapply(ts_budget_revenue["value"], function(x) {re
 p<-ggplot(data = ts_budget_revenue, aes(x=year, y=value, color=cat)) +
   geom_point() +
   geom_line() +
-  ggtitle("Revenues and budgets of the of super heroes movies during the time") +
+  ggtitle("Average revenues and budgets of the of super heroes movies over time") +
   labs(x = "year", y = "Gross and budget (in 100 millions of dollars)")
 
 p1<-ggplotly(p) %>% config(displayModeBar = F)
 ggplotly(p1)
 ```
 
-
-Note: We are considering all the movies that are based on Marvel comics (which includes, the movies like Blade, Constantine and Howard the duck).
+As we previously observed, there is a general increasing trend for both gross and budget over time. After the initial release of the 1978 movie Superman, which was a box office hit, superhero movies struggled to become financially viable: in 1984, for example, superhero movies actually cost more money than they made on average. A new era for superhero movies started in 1989 with the release of Batman, which significantly contributed to the large average revenue of that year. 
+After this commercial success, budgets for superhero movies increased and with that came higher worldwide revenues. In 1997 and 1998 however, Batman & Robin and Steel came out, and both were commercial failures. This is the main reason behind the dip in those two years. 
+Since the years 2000, budgets have steadily increased, but revenues have skyrocketed: this is due to highly successful franchises : the Spider-Man saga in the early 2000s, the Iron Man series at the end of the 2000s and The Avengers since 2012). These sagas are the main reason behind the mainstream appeal of superhero movies today, much to the regret of Martin Scorsese.
