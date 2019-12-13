@@ -575,7 +575,19 @@ ggplot(results1, aes(release_date, y=avg_gross_usa)) +
 In 1978 Superman was released, and from then on other superhero movies were released but they couldn't perform as well as Superman of 1978 till Batman Returns in 1992. Some movies that came in the middle (1978-1992) are Supergirl in 1984, Superman IV in 1987. Batman in 1989 started to revive the revenues of the superhero movies again. The peak in 2002 is due to the movies "Blade" and "Spiderman" both of which are character from Marvel comics. The dip in 2005 was due to the movies Batman Begins, Constantine and Electra. Even though Batman Begins performed well the revenue generated in that year is brought down by the poor performance of Constantine and Electra (both are characters from Marvel comics). The same goes for 2010, where Iron Man 2 performed well but the average is brought down due to the movie Jonah Hex. The peak in 2013 is due to a slew of superhero movies, namely Iron Man 3, Man of Steel, The Wolverine and Thor: The Dark World. We can see that the years that generated high revenues saw the releases of movies about relatively well known superheroes and have gotten good revenues if the movie had high ratings (implying good quality). But to verify this claim, we will do a scatter plot between the ratings (critics and users) of the movie and the revenue it generated to see if the movies have gotten good revenues due to the superhero bubble or due to good quality content.
 
 ```{r}
-#Amaury Scatter plot
+score_vs_revenue <- data.frame(name = dff1$name, critic = dff1$critic_score_rt, gross = dff1$gross_worldwide)
+score_vs_revenue["critic"] <- lapply(score_vs_revenue["critic"], function(x) as.numeric(gsub("%", "",x)))
+score_vs_revenue <- na.omit(score_vs_revenue)
+
+x <- list(
+  title = "Revenue (in billions of dollars)"
+)
+y <- list(
+  title = "Critic (in percentage)")
+p <- plot_ly(score_vs_revenue, x = ~gross, y = ~critic, type = 'scatter', mode = 'markers',
+        text = ~paste('name: ', name)) %>% layout(xaxis = x, yaxis = y, title="Scatterplot Score vs Revenue of super heroes movies")
+
+ggplotly(p)
 ```
 
 Let us now see the box plots of ratings (critics and audience) differentiated on the movie studio that produced them. This would help us compare the quality of the superhero movies between the studios (general consensus is that Marvel movies have better score and revenue than their DC counterparts). Through this we can also see if there are any outliers in the data (uncharacteristically high or low rated movies).
@@ -751,6 +763,20 @@ From the above animated graph we can see that the regular movie's Return on Inve
 
 
 ```{r}
+ts_budget_revenue <- data.frame(year = dff1$year_of_release, budget = dff1$budget, gross = dff1$gross_worldwide)
+ts_budget_revenue <- ts_budget_revenue %>% group_by(year) %>% summarize(budget = mean(budget), gross = mean(gross))
+ts_budget_revenue <- na.omit(ts_budget_revenue)
+ts_budget_revenue <- gather(ts_budget_revenue, key = "cat", value = "value", -year)
+ts_budget_revenue["value"] <- lapply(ts_budget_revenue["value"], function(x) {return(as.numeric(x)/100000000)})
+
+p<-ggplot(data = ts_budget_revenue, aes(x=year, y=value, color=cat)) +
+  geom_point() +
+  geom_line() +
+  ggtitle("Revenues and budgets of the of super heroes movies during the time") +
+  labs(x = "year", y = "Gross and budget (in 100 millions of dollars)")
+
+p1<-ggplotly(p) %>% config(displayModeBar = F)
+ggplotly(p1)
 ```
 
 
