@@ -92,13 +92,13 @@ visna(nm1, sort='b')
 ```
 Note: The names of some columns have been re-coded in the interest of space. ("title"="original title","VC"="Vote count","VA"="Vote Average", "RD"="release date").
 
-We see something interesting here, even though from the plot it looks like many rows are missing runtime, genre, and the director details, we found on careful examination of the dataset that the missing values of the director column, genre column and the runtime column have more no of unique missing patterns than the other columns, since visna compiles all the rows with similar missing patterns into one single row, and since most of the missing patterns of director, genre and the runtime are unique it looks like they are more in number when we look at the blue fills in their columns. 
+We see something interesting here, even though from the plot it looks like many rows are missing runtime, genre, and the director details, we found on careful examination of the dataset that the missing values of the director column, genre column and the runtime column have a higher number of unique missing patterns than the other columns. Since visna compiles all the rows with similar missing patterns into one single row, and most of the missing patterns of director, genre and the runtime are unique, it looks like they appear more frequently when we look at the blue fills in their columns. 
 
-In missing row patterns we can see that, of all the rows that are having missing values, most no of rows are missing budget details. The highest missing values are in the column budget, and then revenue and then runtime, then there are a few in genre and a few in director.
+From the missing row patterns we can see that, of all the rows that are having missing values, most rows are missing budget details. The highest missing values are in the budget column, and then revenue and then runtime, then there are a few in genre and a few in director.
 
 We can see that whenever revenue of a movie is missing, budget is also missing.
 
-Let us now add an extra column to our dataset with its values as number of NAs in the row (i.e. number of missing value per movie). Let us also check our assumption that movies of bad quality (low total ratings (total rating values are obtained by multiplying no of votes with vote average of each movie)), or the movies that are less popular or the movies that are old have more NA values. We draw a scatter plot matrix for ratings score, year of release, popularity and no of NA values in the row to check if a strong correlation exists.
+Let us now add an extra column to our dataset with its values as number of NAs in the row (i.e. number of missing value per movie). Let us also check our assumption that movies of bad quality (low total ratings (total rating values are obtained by multiplying no of votes with vote average of each movie)), or movies that are less popular or older have more NA values. We draw a scatter plot matrix for ratings score, year of release, popularity and number of NA values in the row to check if a strong correlation exists.
 
 ```{r}
 
@@ -118,9 +118,9 @@ ggpairs(dfg3,progress=FALSE)
 ```
 Note: tot_rating and na_sum from the plots represent the total rating and the number of NA values for that movie.
 
-Though there is a slight negative correlation between the popularity and number of NA values, release year and number of NA values, and total rating and the number of NA values; it is not strong enough to strengthen our assumption. But from the plots we can see that higher no of missing values (more than 2 missing values) in a row (per movie) are fairly concentrated for the movies that were released before 1990. It is the same with popularity and total rating too, i.e. there are more number of NAs for movies with popularity below 40, and we can also see that no movie with a popularity score over 50 actually has any NA value. There is only one exception for this which is the movie Frozen II which has a popularity score above 400 and is missing the budget details. Most of the movies that are having missing values are missing budget value irrespective of their popularity, year of release or total rating.
+Though there is a slight negative correlation between the popularity and number of NA values, release year and number of NA values, total rating and the number of NA values; it is not strong enough to strengthen our assumption. But from the plots we can see that a large number of missing values (more than 2 missing values) appear for movies that were released before 1990. The same is evident with popularity and total rating, i.e. there are more NA values for movies with popularity below 40, and we can also see that no movie with a popularity score over 50 actually has any NA value. There is only one exception for this which is the movie Frozen II which has a popularity score above 40 and is missing the budget details. Most of the movies that are having missing values are missing budget value irrespective of their popularity, year of release or total rating.
 
-Let us now remove the rows containing NA values from our dataset for our analysis from here on. We will save this as our clean dataset, and since we have extracted the years of the movies from the release date (we did it while making the scatter plot matrix), this will have years column seperately in numeric format. Removing all the NA values removed 747 movies from the original dataset (which had 3959 movies) now we are left with 3212 movies.
+Let us now remove the rows containing NA values from our dataset for our analysis from here on. We will save this as our clean dataset and consider movie release year as a numeric format. Removing all the NA values removed 747 movies from the original dataset (which had 3959 movies) now we are left with 3212 movies.
 ```{r}
 new_df=na.omit(dfgg)
 #We lost 747 movies after removing the NA values from the dataset
@@ -128,7 +128,7 @@ write.csv(new_df,"/Users/ap/Documents/EDAV_assignments/clean_data.csv", row.name
 ```
 
 <h3>NA analysis for the Superhero Dataset</h3>
-Let us repeat the same procedure for the superhero dataset, and see if there are any missingness patterns in this dataset. 
+Let us repeat the same procedure for the superhero dataset, and see if there are any NA patterns in this dataset. 
 First let us see the percentage of missing values in each column of the dataset.
 ```{r}
 df=read.csv("clean_superhero.csv")
@@ -136,7 +136,7 @@ pr=colSums(is.na(df))/nrow(df)*100
 sort(pr,decreasing = TRUE)
 ```
 
-We can see from the above output that we don't have a lot of missing values in our dataset, and of the missing values we have most of them are missing opening weekend collection details. The "theaters" column has the number of theaters that were allocated to the movie. gross_usa and the gross_worldwide columns show the gross amount made by the movie in the US and worldwide. The budget column gives the budget of the movie. There are some missing values in the theaters column, and some in the gross_usa column and some in the gross_worldwide column and a very few in the budget column.
+We can see from the above output that we don't have many missing values in our dataset, and of the missing values we have, most of them are missing "opening weekend revenue" details. The "theaters" column contains the number of theaters that were allocated to each movie. The gross_usa and the gross_worldwide columns show the gross revenue made by the movie in the US and worldwide. The budget column represents the budget of the movie. There are some missing values in the theaters column, and some in the gross_usa column and some in the gross_worldwide column and a very few in the budget column.
 
 ```{r}
 library(extracat)
@@ -147,9 +147,9 @@ visna(nm, sort='b')
 
 Note: The names of some variables have been re-coded in the interest of space. ("opw"="opening weekend gross","Gusa"="overall domestic gross,"Gwrld"="Worldwide gross","rt"="rotten tomato link", "imdbr"="imdb rating", "RD"="release date","CS"="Critics Score", "AS"="Audience Score").
 
-We can see from the plot that most of the rows have all the values. In the rows having missing values, the most common missing pattern is the worldwide gross, US gross, number of theaters and opening weekend. We can see that whenever budget is missing worldwide gross, USA gross, theater allocation, and opening weekend collection details are missing.
+We can see from the plot that most of the rows have all the values. In the rows with missing values, the most common missing pattern is : worldwide gross, US gross, number of theaters and opening weekend. We can see that whenever budget is missing, worldwide gross, USA gross, theater allocation, and opening weekend collection details are missing.
 
-Whenever the domestic gross is missing, the worldwide gross and the opening weekend collection are missing (which makes sense as without data on opening weekend gross data we can't calculate the domestic gross and without domestic gross we can't calculate the worldwide gross). Whenever the theater allocation details are missing the opening weekend data is also missing.
+Whenever the domestic gross is missing, the worldwide gross and the opening weekend collection are missing (which makes sense as without data on opening weekend gross data we can't calculate the domestic gross and without domestic gross we can't calculate the worldwide gross). Whenever the theater allocation details are missing, the opening weekend data is also missing.
 
 
 ```{r}
@@ -168,7 +168,7 @@ dff3=filter(dff2,dff2$NAs!=0)
 ggpairs(dff3)
 ```
 
-We can see that there is a strong negative correlation between the year of release and the number of NA values for the movies, that have missing values. It strengthens our suspicion that the missing budget, revenue, theater data values are because of the lack of records for the older superhero movies.
+We can see that there is a strong negative correlation between the year of release and the number of NA values for the movies, that have missing values. It strengthens our suspicion that the budget, revenue, theater data values are missing because of the lack of records for the older superhero movies.
 
 
 <h1>V. Results and Findings </h1>
@@ -179,9 +179,9 @@ We can see that there is a strong negative correlation between the year of relea
 dff <- read.csv('clean_data.csv')
 ```
 
-The dataset we are woking with is composed of 3212 rows and 12 columns, in this part of our analysis we are primarily focusing on the the "genre", "vote average", "budget", "revenue" and "runtime" columns.
+The dataset we are woking with is composed of 3212 rows and 12 columns. In this part of our analysis we are primarily focusing on the the "genre", "vote average", "budget", "revenue" and "runtime" columns.
 
-Note: The genre details of the movies in the datadet are given as "Action|Comedy|Adventure" etc, for our analysis we are considering the first genre (let us call this primary genre from here on) in the list, as it is the primary genre of the movie (The genres in the genre column of the dataset are present in the order of their relevance to the movie(ex: if a movie have 2 genres action and comedy, and if action is its primary genre, it is represented as "Action|Comedy") and are not ordered alphabetically). 
+Note: The genre details of the movies in the dataset are given as "Action|Comedy|Adventure" etc. For our analysis we are considering the first genre (let us call this primary genre from here on) in the list, as the primary genre of the movie (The genres in the genre column of the dataset are present in the order of their relevance to the movie). For example, if a movie has 2 genres: action and comedy, and if action is its primary genre, it is represented as "Action|Comedy" and this order is not alphabetical. 
 
 
 Let us now see the list of all the unique primary genres in our normal dataset.
@@ -207,7 +207,7 @@ ggplot(genres_info, aes(x=reorder(genres,n), y=perc)) +
   coord_flip()
 ```
 
-We can see that the most number of movies in our dataset have their primary genre as action. We will now take the top most present primary genres in our dataset for further analysis.
+We can see that most movies in our dataset have their primary genre as action. We will now take the top most present primary genres in our dataset for further analysis.
 
 In our dataset, the 5 most present genres are:
 * Action (~20.7%)
@@ -259,7 +259,7 @@ ggplotly(o1) %>% config(displayModeBar = F)
 ```
 From the graph we can see that, the average revenue generated by the genres also has been increasing over the years and the ordering of the genres is more or less the same. The movies of "Adventure" genre have generated more revenue than other genres in most of the years, except the years 1982, 1988, 1994, 2009 and 2015.
 
-Let us now look at the average Return on Invesment for each of the 5 genres we are considering. Return on investment is calculated by subtracting the budget from revnue and dividing this difference by the budget. This will signify the profit each movie made for one dollar of its investment. We then group the movies by their primary genres and see which genre gives high return on investment.
+Let us now look at the average Return on Invesment for each of the 5 genres we are considering. Return on investment is calculated by subtracting the budget from revenue and dividing this difference by the budget. This will signify the profit each movie made for one dollar of its investment. We then group the movies by their primary genres and see which genre gives high return on investment.
 
 ```{r, warning=FALSE}
 #x axis is the genre, bar graph
@@ -288,7 +288,7 @@ ggplot(resultss2) +
 ```
 Note: ROI doesn't have a unit of measurement, in general the higher the ROI, the more value we receive for investment.
 
-After removing the suspicious movies that did not have consistent budget and revenue data, we end up with this graph. We can see that horror movies have a very high average return on investment. This is because they are not expensive to make, and if they are good they generate a huge revenue. After filtering and checking the data, we found that the movie with the highest ROI is "Paranormal Activity 2009" which had a budget of 15,000 dollars and made 193 million dollars globally. The second highest is "The Blair Witch Project" which is the first ever found footage genre movie. It was made on a budget of 60,000 dollars and generated a revenue of 248 million dollars. These movies increased the average ROI of the Horror genre. Even without these movies "Horror" movies have a higher ROI than other genres. When observing the comedy genre, we found that a Japanese zombie comedy movie called "One Cut of the Dead" was made on a budget of 30,000 dollars and generated a revenue of 200 million dollars after its international release. This movie alone is one of the reaons for the high average ROI of comedy movies. Of the movies belonging to the Drama genre, the movie with highest ROI is a Hindi movie "Secret Superstar" it has an ROI of 479. 
+After removing the suspicious movies that did not have consistent budget and revenue data, we obtain the above graph. We can see that horror movies have a very high average return on investment. This is because they are not expensive to make, and if they are good they generate a huge revenue. After filtering and checking the data, we found that the movie with the highest ROI is "Paranormal Activity 2009" which had a budget of 15,000 dollars and made 193 million dollars globally. The second highest is "The Blair Witch Project" which is the first ever found footage genre movie. It was made on a budget of 60,000 dollars and generated a revenue of 248 million dollars. These movies increased the average ROI of the Horror genre. Even without these movies, "Horror" movies have a higher ROI than other genres. When observing the comedy genre, we found that a Japanese zombie comedy movie called "One Cut of the Dead" was made on a budget of 30,000 dollars and generated a revenue of 200 million dollars after its international release. This movie alone is one of the reasons for the high average ROI of comedy movies. Of the movies belonging to the Drama genre, the movie with highest ROI is a Hindi movie "Secret Superstar" it has an ROI of 479. 
 
 Let us now look at the average runtime of the movies of each primary genre we have chosen.
 ```{r}
@@ -377,20 +377,20 @@ vb + geom_col() + ggtitle("Average ratings received by movies of genres we're co
   labs(x = "Genre", y = "Average rating on a scale of 10")
 ```
 
-It is surprising to see that there is not a lot of difference in the average ratings received by the movies made in the genres we're considering. Dramas receiving high average can be expected, as it is like a general consensus that dramas are highest quality cinema (one simply needs to look at all the past best picture Oscar winners).
+It is surprising to see that there is not much difference in the average ratings received by the movies made in the genres we're considering. Dramas receiving high average can be expected, as it is like a general consensus that dramas represent the highest quality cinema (one simply needs to look at all the past best picture Oscar winners).
 
-Now we have to the big question we are trying to answer. 
-Let us now test our assumption that movie production houses tend to look at old patterns of movie genres and their financial success and try to make more movies of similar genre to earn high revenues. We do this by making a scatter plot between no of movies of a particular genre in a taken year and the revenue generated by the movies of this genre from the previous years. For example with the assumption that a movie takes 2 years to make on an average, we will take the number of movies made in each genre in 2018  (on y-axis) and plot them against the revenue of these genres from the year 2016 (on x-axis). If there is a strong correlation, it means that since the movies belonging to these genres have performed well financially in 2016, more of such movies were made in 2018. The issue with trying to test this with static graphs is that we will have to make multiple static graphs (one for each combination of years) and we will have to hard code the gap (suppose 2 years). This is a perfect oppurtunity for an interactive graph. We have made a shiny app in which the user can chose a beginning year and a gap, and see the scatter plot of no of movies of genres released in the beginning year plus the gap v/s the average revenue of these genres in the beginning year. Each point on the graph represents a genre. We hosted this app using shinyapps.io [click here to try the app](https://movieanalysis.shinyapps.io/project/).
+
+Let us now test our assumption that movie production studios tend to look at old patterns of movie genres and their financial success and try to make more movies of similar genre to earn high revenues. We do this by making a scatter plot between no of movies of a particular genre in a taken year and the revenue generated by the movies of this genre from the previous years. For example with the assumption that a movie takes 2 years to make on an average, we will take the number of movies made in each genre in 2018  (on y-axis) and plot them against the revenue of these genres from the year 2016 (on x-axis). If there is a strong correlation, it means that since the movies belonging to these genres have performed well financially in 2016, more of such movies were made in 2018. The issue with trying to test this with static graphs is that we will have to make multiple static graphs (one for each combination of years) and we will have to hard code the gap (suppose 2 years). This is a perfect opportunity for an interactive graph. We have made a shiny app in which the user can chose a beginning year and a gap, and see the scatter plot of no of movies of genres released in the beginning year plus the gap v/s the average revenue of these genres in the beginning year. Each point on the graph represents a genre. We hosted this app using shinyapps.io [click here to try the app](https://movieanalysis.shinyapps.io/project/).
 
 Note: We have limited the gap to 5 years, as except in a very few situations the average time to make a movie is generally less than 5 years.
 
-After using our interactive part to test our assumption, we have seen that there is no strong correlation between the number of movies of a genre made in the starting year chosen plus the gap and the average revenue of these genres from the starting year. So either our assumption that "production houses tend to look at old patterns of movie genres and their financial success and try to make more movies of similar genre to earn high revenues" was wrong, or the movies that were made such a way didn’t make their way in to our dataset (since we made our dataset by collecting top 100 high grossing movies by year, we can say that the these movies didn't make it to the top 100 highest grossing movies of that year). So it is not suggested see the older trends and make movies of similar genre if you want to make a movie that becomes one of the top grossing movies of its year.
+After using our interactive part to test our assumption, we have seen that there is no strong correlation between the number of movies of a genre made in the starting year chosen plus the gap and the average revenue of these genres from the starting year. So either our assumption that "production studios tend to look at old patterns of movie genres and their financial success and try to make more movies of similar genre to earn high revenues" was wrong, or the movies that were made such a way did not make their way in to our dataset (since we made our dataset by collecting top 100 high grossing movies by year, we can say that the these movies didn't make it to the top 100 highest grossing movies of that year). So we would not advise using older trends and producing movies of similar genre if one hopes to make a top grossing movie for its release year.
 
 <h3> b)Analysis of Martin Scorsese's claim and a possible solution to the problem</h3>
 
-We see that nowadays many of the yesteryear's famous directors (like Martin Scorsese) are coming out and speaking up against the monopoly of super hero films over the theaters. Mr.Scorsese also claimed that these movies are like amuzement parks and cannot be called cinema, he also exclaimed that because of this kinds of movies the other good movies released during the same time are over-shadowed.
+We see that nowadays many of the yesteryear's famous directors (like Martin Scorsese) are coming out and speaking up against the monopoly of super hero films over the theaters. Mr.Scorsese also claimed that these movies are like amusement parks and cannot be called cinema, he also exclaimed that because of this type of movie, the other good movies released during the same time are over-shadowed.
 
-On thinking about this claim, we came up with a metric for these kinds of movies, these would be movies that generally have not so good critics score (below 60 on rotten tomatoes), a high-budget (above $100 million) and a worldwide gross above 500 million dollars. The reason behind chosing the critics score is that even if the audience like the "amuzement park" style of movies the critics will be harsh with their ratings if they feel the movies was made only for eye feast. To see if movies with these characteristics exist in the superhero dataset we made an interactive paralell coordinate plot. For each of the variables (critics score, worldwide gross, and the budget) of the plot, you can select a value range for these variables (by clicking and dragging over the axes) to see if such movies indeed exist. We would suggest checking for budget over 100 million dollars, worldwide gross above 500 million dollars and rotten tomato score of 60 and below.
+On thinking about this claim, we came up with a metric for this type of movie: these would be movies that generally have not good critics score (below 60 on rotten tomatoes), a high-budget (above $100 million) and a worldwide gross above 500 million dollars. The reason behind chosing the critics score is that even if the audience like the "amusement park" style of movies the critics will be harsh with their ratings if they feel the movie was made only to be a visual spectacle. To see if movies with these characteristics exist in the superhero dataset we made an interactive parallel coordinate plot. For each of the variables (critics score, worldwide gross, and the budget) of the plot, you can select a value range for these variables (by clicking and dragging over the axes) to see if such movies indeed exist. We would suggest checking for budget above 100 million dollars, worldwide gross above 500 million dollars and a rotten tomato score of 60 and below.
 
 ```{r}
 library(parcoords)
@@ -407,7 +407,7 @@ names(dfj)=c("studio","critics score","worldwide gross (in millions)", "budget (
 parcoords(dfj, brushMode = "1D-axes", reorderable = T, queue = T,rownames=F,color = list(colorBy = "studio",colorScale = "scaleOrdinal",colorScheme = "schemeCategory10"), withD3 = TRUE)
 ```
 
-As we can see, there indeed exist such movies in the superhero dataset that are of "Amusement park" type. Having seen this let us get into the analysis of the other aspects of the superhero movies.
+As we can see, there indeed exist such movies in the superhero dataset that are of "Amusement park" type. Let us now begin our nalysis of the other aspects of the superhero movies.
 
 Let us look at the trend in the domestic gross revenue (domestic gross revenue is the gross revenue generated in the US during the full run of a movie) generated by the superhero movies over the years. If there are multiple superhero movies released in a year we are adding up their revenues.
 
@@ -428,7 +428,7 @@ ggplot(results, aes(release_date, y=total_gross_usa)) +
   ylab("Gross in USA in millions")
 ```
 
-We can see from the overall trend that the total gross collections generated by superhero movies in the domestic market has been increasing. From the magnitude of these sharp increases we can see that the increase in gross revenue in US is not just because of inflation. We can see a very sharp increase from 2015 to 2018; one of the major reasons for this is the higher number of superhero movies made in these years. We can see sharp dips in the gross collection in the years 2015, 2010 and 2009. To see why this happended let us make a bar graph to see number of superhero movies that were released during these years.
+We can see from the overall trend that the total gross collections generated by superhero movies in the domestic market has been increasing. From the magnitude of these sharp increases we can see that the increase in gross revenue in US is not just because of inflation. We can see a very sharp increase from 2015 to 2018. One of the major reasons for this is the higher number of superhero movies made in these years. We can see sharp dips in the gross collection in the years 2015, 2010 and 2009. To see why this happended let us make a bar graph to see number of superhero movies that were released during these years.
 
 
 ```{r}
@@ -439,7 +439,7 @@ ggplot(gross_year, aes(release_date)) +
   ylab("Number of movies")
 ```
 
-Six superhero movies were released in 2018, and 6 in 2019, but the dip in the revenue generated in 2019 is due to the fact that the movie "Joker" hasn't finished its full run yet and we only have its domestic gross till the time we collected the data, this brought down the average gross of 2019. We can see that 3 superhero movies were released in 2015 in contrast to the years before and after 2015 (which had more number of superhero movies), this explains the gross collections dip in 2015. The same can be said about 2009 and 2010. From the overall trend in the graph we can see that number of superhero movies being made over the years has been increasing.
+Six superhero movies were released in 2018, and 6 in 2019, but the dip in the revenue generated in 2019 is due to the fact that the movie "Joker" hasn't finished its full run yet and we only have its domestic gross till the time we collected the data. This brought the average gross of 2019 down. We can see that 3 superhero movies were released in 2015 in contrast to the years before and after 2015 (which had a higher number of superhero movies), this explains the gross collections dip in 2015. The same can be said about 2009 and 2010. From the overall trend in the graph we can see that number of superhero movies being made over the years has been increasing.
 
 
 Since total gross over the years is a metric that depends on the number of movies that were released in that year, let us see the total <strong>average</strong> gross of the superhero movies over the years.
@@ -459,8 +459,8 @@ ggplot(results1, aes(release_date, y=avg_gross_usa)) +
   ylab("Gross in USA in millions")
 ```
 
-In 1978 Superman was released, and from then on other superhero movies were released but they couldn't perform as well as Superman of 1978 till Batman Returns in 1992. Some movies that came in the middle (1978-1992) are Supergirl in 1984, Superman IV in 1987. Batman in 1989 started to revive the revenues of the superhero movies again. The peak in 2002 is due to the movies "Blade" and "Spiderman" both of which are character from Marvel comics. The dip in 2005 was due to the movies Batman Begins, Constantine and Electra. Even though Batman Begins performed well the revenue generated in that year is brought down by the poor performance of Constantine and Electra (both are characters from Marvel comics). The same goes for 2010, where Iron Man 2 performed well but the average is brought down due to the movie Jonah Hex. The peak in 2013 is due to a slew of superhero movies, namely Iron Man 3, Man of Steel, The Wolverine and Thor: The Dark World. We can see that the years that generated high revenues saw the releases of movies about relatively well known superheroes and have gotten good revenues if the movie had high ratings (implying good quality). 
-But to verify this statement, we will do a scatter plot between the critics scores from rotten tomato page of the movie and the revenue it generated. This will tell us if the movies have gotten good revenues due to the superhero bubble or due to good quality content.
+In 1978 Superman was released, and from then on other superhero movies were released but they couldn't perform as well as Superman of 1978 till Batman Returns in 1992. Some movies that came in the middle (1978-1992) are Supergirl in 1984, Superman IV in 1987. Batman in 1989 started to revive the revenues of the superhero movies again. The peak in 2002 is due to the movies "Blade" and "Spiderman" both of which are character from Marvel comics. The dip in 2005 was due to the movies Batman Begins, Constantine and Electra. Even though Batman Begins performed well, the revenue generated in that year is brought down by the poor performance of Constantine and Electra (both are characters from Marvel comics). The same goes for 2010, where Iron Man 2 performed well but the average is brought down due to the movie Jonah Hex. The peak in 2013 is due to a slew of superhero movies, namely Iron Man 3, Man of Steel, The Wolverine and Thor: The Dark World. We can see that the years that generated high revenues saw the releases of movies about relatively well known superheroes and have gotten good revenues if the movie had high ratings (implying good quality). 
+But to verify this statement, we will do a scatter plot between the Rotten Tomatoes critic score of the movie and the revenue it generated. This will tell us if the movies have gotten good revenues due to the superhero bubble or due to good quality content.
 
 ```{r}
 score_vs_revenue <- data.frame(name = dff1$name, critic = dff1$critic_score_rt, gross = dff1$gross_worldwide)
@@ -479,9 +479,9 @@ ggplotly(p)
 ```
 Note: You can hover over the points to see the name of the movies they represent.
 
-We see that there is no strong correlation between the critics score of the movies and the revenue they generate. This could mean that the revenue generated by the movies that have a critics score of below 60 is due to the superhero bubble. (Note: Though the revenues genered by the movies having bad critics scores seem lower than the revenues generated by the superhero movies with good critics score, some of them have still cross the half a billion mark, which is a very big achievement for normal movies)
+We see that there is no strong correlation between the critics score of the movies and the revenue they generate. This could mean that the revenue generated by the movies that have a critics score of below 60 is due to the superhero bubble. (Note: Though the revenues generated by the movies having bad critics scores seem lower than the revenues generated by the superhero movies with good critics score, some still generated over half a billion dollars, which is a very big achievement for normal movies)
 
-Let us see how the average budget and revenue of the superhero movies has been changing over the years.
+Let us see how the average budget and revenue of the superhero movies have changed over the years.
 ```{r}
 ts_budget_revenue <- data.frame(year = dff1$year_of_release, budget = dff1$budget, gross = dff1$gross_worldwide)
 ts_budget_revenue <- ts_budget_revenue %>% group_by(year) %>% summarize(budget = mean(budget), gross = mean(gross))
@@ -501,9 +501,9 @@ There is a general increasing trend for both gross and budget over time. After t
 
 After this commercial success, budgets for superhero movies increased and with that came higher worldwide revenues. In 1997 and 1998 however, Batman & Robin and Steel came out, and both were commercial failures. This is the main reason behind the dip in those two years. 
 
-Since the years 2000, budgets have steadily increased, but revenues have skyrocketed: this is due to highly successful franchises : the Spider-Man saga in the early 2000s, the Iron Man series at the end of the 2000s and The Avengers since 2012). These sagas are the main reason behind the mainstream appeal of superhero movies today, much to the regret of Martin Scorsese.
+Since the year 2000, budgets have steadily increased, but revenues have skyrocketed: this is due to highly successful franchises : the Spider-Man saga in the early 2000s, the Iron Man series at the end of the 2000s and The Avengers since 2012). These sagas are the main reason behind the mainstream appeal of superhero movies today, much to the regret of Martin Scorsese.
 
-Let us now see the box plots of ratings (critics and audience) differentiated on the movie studio that produced them. This would help us compare the quality of the superhero movies between the studios (general consensus is that Marvel movies have better score and revenue than their DC counterparts). Through this we can also see if there are any outliers in the data (uncharacteristically high or low rated movies).
+Let us now see the box plots of ratings (critics and audience) differentiated by the movie studio that produced them. This will help us compare the quality of the superhero movies between the studios (general consensus is that Marvel movies have better score and revenue than their DC counterparts). Through this we can also see if there are any outliers in the data (uncharacteristically high or low rated movies).
 
 ```{r}
 ggplot(dff1, aes(x = reorder(studio, -imdb_rating, median), y = imdb_rating)) + 
@@ -566,7 +566,7 @@ ggplot(results2, aes(year_of_release, y=avg_views)) +
   ylab("average views in USA")
 ```
 
-Looking at the plot we can see that when accounting for inflation, Batman, which was released in 1989 got the highest audience and Superman which was released in 1978 got a similar number of views. Total number of views has dropped since then and rose again in 1998 (Blade I) till 2002 (year during which the first Spider-man movie was released, and Blade II was released). The movies released in 2012 also got a similar amout of views as the ones in 2002. Four movies were released in 2012 and the major movies that caused this spike in viewership are The Avengers and the Dark Knight Rises. We can see that there has been a constant rise in viewership from 2015 to 2018. So we can see that from the past 5 years there has been a constant increase in the viewership of the super-hero movies, but their viewership was not as high as the first Batman and Superman movies. This can be due to the intial excitement of comic fans to see their favorite characters come live on the screen.
+Looking at the plot we can see that when accounting for inflation, Batman, which was released in 1989 got the highest audience and Superman which was released in 1978 got a similar number of views. Total number of views has dropped since then and rose again in 1998 (Blade I) till 2002 (year during which the first Spider-man movie was released, and Blade II was released). The movies released in 2012 also got a similar amount of views as the ones in 2002. Four movies were released in 2012 and the major movies that caused this spike in viewership are The Avengers and the Dark Knight Rises. We can see that there has been a constant rise in viewership from 2015 to 2018. So we can see that from the past 5 years there has been a constant increase in the viewership of the super-hero movies, but their viewership was not as high as the first Batman and Superman movies. This can be due to the intial excitement of comic fans to see their favorite characters come live on the screen.
 
 Since we have seen that the trend in viewership for the superhero movies has indeed been rising for the past 5 years, let us see the trend in the theater allocation. To do this we will merge our dataset with a different one which has the number of theaters present in a year in the US (obtained from the National Association of Theater Owners website). Then we will get the ratio of number of theater allocated per movie by dividing the number of theaters allocated for this movie by the total number of theaters in the US in the year this movie released. We then group by year and plot the average number of theaters allocated for super-hero movies over the years. Unfortunately we only have theater count in US details from the year 1995, so we will lose 11 movies that came before 1995 after the merging of both the datasets.
 
@@ -591,9 +591,9 @@ ggplot(results3, aes(year_of_release, y=avg_theaters)) +
   ylab("average ratio of theaters allocated in USA")
 ```
 
-We can see that the average ratio of theaters allocated to these movies with the theaters present in those years has been increasing overall. There was a drop in the average number of theaters allocated in the year 1997, two movies namely, Batman and Robin, and Steel were released that year. Batman and Robin had 0.3933 as the ratio of number of theaters it was allocated (which is comparable to the previous year) but the average ratio is brought down because the movie "Steel" (which had a ratio of 0.168). This is because it was not based on a very famous superhero, and therefore was not allocated a lot of theaters. The small downs in the trend are mostly due to lesser number of theaters being allocated to not so famous superhero characters like "catwoman". We can clearly see an increasing trend in the ratio of number theaters displaying superhero movies, and in recent years we can see that over 70% of the theaters in the US are playing a superhero movie should one be released during that time. This clearly proves the claim made by Mr.Scorsese that these movies are taking up more no of theaters, making it hard for the smaller movies released during the same time to even get some audience. 
+We can see that the average ratio of theaters allocated to these movies has been increasing overall. There was a drop in the average number of theaters allocated in the year 1997: two movies namely, Batman and Robin, and Steel were released that year. Batman and Robin had 0.3933 as the ratio of number of theaters it was allocated (which is comparable to the previous year) but the average ratio is brought down because the movie "Steel" (which had a ratio of 0.168). This is because it was not based on a very famous superhero, and therefore was not allocated a lot of theaters. The small decreases in the trend are mostly due to a lower number of theaters being allocated to not so famous superhero characters like "catwoman". We can clearly see an increasing trend in the ratio of number theaters displaying superhero movies, and in recent years we can see that over 70% of the theaters in the US have played a superhero movie (should one be released during that time). This clearly proves the claim made by Mr.Scorsese that these movies are taking up more theater space, making it hard for the smaller movies released during the same time to even reach audiences. 
 
-Now let us see if there is any correlation between the revenue generated by a movie and the no of theaters it was allocated. You can hover over the points to see what movies those points represent.
+Now let us see if there is any correlation between the revenue generated by a movie and the number of theaters it was allocated. You can hover over the points to see what movies those points represent.
 ```{r}
 x <- list(
   title = "No of theaters allocated"
@@ -636,7 +636,7 @@ ggplot(results5, aes(year_of_release, y=avg_views_week1)) +
   xlab("Year") + 
   ylab("average views (in millions) per week 1 in USA")
 ```
-Though there are lot of ups and downs we can see that the overall trend has been rising, signaling that more people are watching superhero movies withtin the first week itself. This can be due to many possible reasons. One reason that strikes us is the fear of spoiler filled reviews. In the current trend of giving spoiler filled reviews to movies online people are afraid that if they wait for too long they might have to learn about the fate of their favorite superheroes through spoilers or leaked post credit scenes. (This is not accounting for the increase in the population over these years).
+Though there are lot of rises and decreases, we can see that the overall trend has been rising, signaling that more people are watching superhero movies withtin the first week itself. This can be due to different reasons. One reason that strikes us is the fear of spoiler filled reviews. In the current trend of giving spoiler filled reviews to movies online people are afraid that if they wait for too long they might have to learn about the fate of their favorite superheroes through spoilers or leaked post credit scenes. (This is not accounting for the increase in the population over these years).
 
 This sparks a possible solution to the theater allotment issue. If a theater runs 4 shows of a movie per a day, and if it is plannnig on showcasing a superhero movie, it can showcase the superhero movie in all the 4 shows for the first week and from the second week can showcase the superhero movie in 2 of its prime slots and another movie in the rest of the slots. This would help other movies (that were released at the same time as the superhero movies) get the viewership they deserve.
 
@@ -677,14 +677,14 @@ goo <- mean_merged %>%
 animate(goo, duration = 15, fps = 20, width = 800, height = 800, renderer = gifski_renderer())
 anim_save("output.gif")
 ```
-From the above animated graph we can see that the ROI line for regular movies has been more or less constant over the years. The ROI line for superhero movies however was initially lower than the ROI line for regular movies but has caught up to the regular movies line in 1990 to 1995, and fell lower after that. But we can see its resurgence from 2015 and if it keeps growing at the same pace it will eventually grow above the regular movies. This indicates that superhero movies might get more profitable than the average normal movies in the future. That is, studios can expect a higher return from superhero movies than from regular movies in the near future should this trend continue. This might be a possible explanation for movie studios jumping on the "superhero movie bandwagon".
+From the above animated graph we can see that the ROI line for regular movies has been more or less constant over the years. The ROI line for superhero movies however was initially lower than the ROI line for regular movies but has caught up to the regular movies line in 1990 to 1995, and fell lower after that. But we can see its resurgence since 2015. If it keeps growing at the same pace it will eventually grow above the regular movies. This indicates that superhero movies might get more profitable than the average normal movies in the future. That is, studios can expect a higher return from superhero movies than from regular movies in the near future should this trend continue. This might be a possible explanation for movie studios jumping on the "superhero movie bandwagon".
 
 Note: The peaks in the regular movie line in the years 1999, 2009, and 2017 are due to the very high ROI of the movies "The Blair Witch Project", "Paranormal Activity" and "One Cut of the Dead" respectively. We have discussed this during our ROI by genre analysis.
 
 
 
 <h3>c) Director Analysis </h3>
-For this part of our analysis we are again using the normal dataset form the first part.
+For this part of our analysis we are once again using the normal dataset form the first part.
 
 In this part of our analysis let us see how the top bankable directors (the bankability is determined by the revenue generated by their movies, the higher the revenue, the higher the bankability) of older years have been performing over the years. We will take the top 6 directors based on the financial performance of their movies from the year 1980 to 2000. We will then see how the movies they made after the year 2000 have been performing. This will help us see if the movies of these directors are consistently performing well.  
 
@@ -774,7 +774,7 @@ plot + geom_text(aes(label = round(freq/total, 3)), color = "white") +
       theme(plot.caption = element_text(color = "grey68"))
 ```
 
-We can see an interesting pattern here, each one of them made at leat one movie in the "Action" genre, one movie in the "Adventure" genre and one movie in the "Drama" genre. Only Robert Zemeckis made a movie in the "Animation" genre. Chris Columbus made 3 comedy movies which is the highest from this set of directors. Spielberg is the only one in this group of directors to have attempted "Thriller", and "History" movies. Only Spielberg and Roland Emmerich made "Science Fiction" movies. Only 3 of the 6 directors ("Chris Columbus", "Robert Zemeckis", and "Spielberg") made Comedy movies. Only 3 of the 6 directors("Richard Donner","Robert Zemeckis" and "Steven Spielberg") made "Fantasy" movies.
+We can see an interesting pattern here: each one of them made at leat one movie in the "Action" genre, one movie in the "Adventure" genre and one movie in the "Drama" genre. Only Robert Zemeckis made a movie in the "Animation" genre. Chris Columbus made 3 comedy movies which is the highest from this set of directors. Spielberg is the only one in this group of directors to have attempted "Thriller", and "History" movies. Only Spielberg and Roland Emmerich made "Science Fiction" movies. Only 3 of the 6 directors ("Chris Columbus", "Robert Zemeckis", and "Spielberg") made Comedy movies. Only 3 of the 6 directors("Richard Donner","Robert Zemeckis" and "Steven Spielberg") made "Fantasy" movies.
 
 Let us now look at the distribution of the average ratings of the movies made by these 6 most bankable directors. We will be using the vote average column (which is on the scale of 1 to 10) from our main dataset, in the following analysis.
 ```{r}
@@ -800,7 +800,7 @@ vb1=ggplot(data= g2, mapping = aes(x=fct_reorder(director,-avg_budget), y=avg_bu
 vb1 + geom_col() + ggtitle("Average budgets of the movies of the top bankable directors") + scale_y_continuous(breaks = seq(0, 130, by = 30))+
   labs(x = "Director", y = "Average budget in millions")
 ```
-We can see that Roland Emmerich's movies have the highest budget on an average, is because he makes more "dystopian" movies, which will need a lot of visual and special effects, and these cost a lot of money. Though James Cameron did not spend a lot on "Titanic" the average budget rose due to the budget of "Avatar". The movies of Steven Spielberg and Robert Zemeckis cost almost the same amount of money to make. Richard Donner makes the least expensive movies of our top bankable directors.
+We can see that Roland Emmerich's movies have the highest budget on an average, because he makes more "dystopian" movies, which will need a lot of visual and special effects, and these cost a lot of money. Though James Cameron did not spend a lot on "Titanic" the average budget rose due to the budget of "Avatar". The movies of Steven Spielberg and Robert Zemeckis cost almost the same amount of money to make. Richard Donner makes the least expensive movies of our top bankable directors.
 
 Let us now look at how many dollars do the movies of these directors make for 1 dollar they spend. This can be calculated by dividing the revenue by the budget of the movie.
 ```{r}
@@ -811,7 +811,7 @@ vb3=ggplot(data= g4, mapping = aes(x=fct_reorder(director,-avg_d), y=avg_d))
 vb3 + geom_col() + ggtitle("Average Ratio of revenue and budget of the movies of our top directors") + scale_y_continuous(breaks = seq(0, 12, by = 1)) +
   labs(x = "Director", y = "No of dollars made per 1 dollar spent")
 ```
-We can see that Chris Columbus's movies get back 11 dollars on an average for everydollar spent, Spielberg's movies get back 8.5 dollars for every dollar spent, and James Cameron's movies get 7.5 dollars for every dollar spent. Richard Donner's movies again get the least number of dollars (3 dollars) back for every dollar spent.
+We can see that Chris Columbus's movies get back 11 dollars on an average for every dollar spent, Spielberg's movies get back 8.5 dollars for every dollar spent, and James Cameron's movies get 7.5 dollars for every dollar spent. Richard Donner's movies again get the least number of dollars (3 dollars) back for every dollar spent.
 
 
 
