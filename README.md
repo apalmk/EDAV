@@ -13,4 +13,4 @@ Context for question 2: Martin Scorsese recently claimed that the superhero movi
 
 Conext for question 3: The bankability of the directors (in our analysis) is measured by the revenues their movies generated. The higher the revenue, higher the bankability.
 
-To look at the final results please see the Analysis and Results folder. It has a html file which contains our entire analysis and findings.
+To look at the final results please see the Analysis and Results folder. It has a html file which contains our entire analysis and findings (OR) see https://drive.google.com/file/d/1u15nxPPqXrvODJ6d2WLwEdpFsiBXglHu/view?usp=sharing
