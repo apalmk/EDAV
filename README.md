@@ -9,7 +9,7 @@ They are:
 
 3. How have the most bankable directors of the older generation been performing in the past 2 decades? Who among them is the most versatile and the most profitable?
 
-Context for question 2: Martin Scorsese recently claimed that the superhero movies have been taking over the theaters and are overshadowing other good movies that released during the same time. He said he feels that they are like these amuzement parks and not like the cinema he grew up loving. This opinion raised a lot of eyebrows.
+Context for question 2: Martin Scorsese recently claimed that the superhero movies have been taking over the theaters and are overshadowing other good movies that released during the same time. He said he feels that they are like theme parks and are not like the cinema he grew up loving. This opinion raised a lot of eyebrows.
 
 Conext for question 3: The bankability of the directors (in our analysis) is measured by the revenues their movies generated. The higher the revenue, higher the bankability.
 
