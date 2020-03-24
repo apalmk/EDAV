@@ -1,7 +1,6 @@
 # Manually curated movie dataset analysis
 
 There have been many analysis done on movie datasets but almost none of them focused on specific questions they tried to answer. Through our analysis we wish to answer/test 3 major questions.
-They are:
 
 1. Are movie production houses looking at the old patterns of movie genres and their financial success and are trying to replicate their success by making more movies of similar genre?
 
